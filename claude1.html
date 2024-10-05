@@ -1,0 +1,786 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Store</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+        }   
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: box-shadow 0.3s ease;
+            
+        }
+        .product-card:hover {
+            box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+            
+        }
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;  
+            transform: scale(1);
+            
+        }
+        
+        #imghover:hover{
+          cursor: pointer;
+          transform: scale(1.1);
+          transition: all 0.5s ease-in ;
+          
+        }
+        .product-card h3 {
+            margin: 10px 0;
+        }
+        .product-card p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .product-card .price {
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        
+        .color-options {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .color-option {     
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #ddd;
+        }
+        .color-option.selected {
+            box-shadow: 0 0 0 2px #333;
+        }
+        .quantity-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .quantity-btn {
+            background-color: #ddd;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .quantity {
+            margin: 0 10px;
+        }
+        .add-to-cart-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: #fff;
+            padding: 20px;
+            transition: right 0.3s ease-in-out;
+            z-index: 1000;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+        }
+        .cart-sidebar.open {
+            right: 0;
+        }
+        
+        .close-cart {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .alert {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            z-index: 10000;
+        }
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+        
+        
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>🛒 shopy.cart</h1>
+            <button class="cart-btn" id="cartBtn">Cart (<span id="cartCount">0</span>)</button>
+        </div>
+    </nav>
+    <img style="width:100%" src="Banner-2.jpg" id="headerimg" alt="">
+    
+    <div class="container">
+        <div class="product-grid" id="productGrid"></div>
+    </div>
+    
+    <div class="cart-sidebar" id="cartSidebar">
+        <button class="close-cart" id="closeCart">&times;</button>
+        <h2>🛒Cart</h2>
+        <div id="cartItems"></div>
+    </div>
+
+    <div class="alert" id="alert">Added to cart successfully!</div>
+    <img style="width:100%" src="foooter.png" id="headerimg" alt="">
+    
+
+    <script>
+        const products = [
+        {
+            id: 5,
+            name: "Smart Watch",
+            price: 99.99,
+            image: "watch.jpg",
+            description: "Feature-packed smartwatch to track your fitness and stay connected.",
+            colors: ["#c0c0c0", "#ffd700"]
+        },
+        {
+            id: 4,
+            name: "Laptop Backpack",
+            price: 39.99,
+            image: "Laptopbag.jpg",
+            description: "Spacious backpack with padded compartment for your laptop.",
+            colors: ["#000000", "#808080"]
+        },
+        {
+            id: 13,
+            name: "Action Camera",
+            price: 149.99,
+            image: "cam-5.jpg",
+            description: "Waterproof action camera for capturing adventures.",
+            colors: ["#000000", "#ffffff", "#ff0000"]
+            },
+        
+        {
+            id: 6,
+            name: "Wireless Headphones",
+            price: 69.99,
+            image: "arr-headP.png",
+            description: "High-quality wireless headphones for music lovers.",
+            colors: ["#000000", "#ffffff", "#ff0000"]
+        },
+        {
+            id: 1,
+            name: "Classic T-Shirt",
+            price: 19.99,
+            image: "tshirt.jpg",
+            description: "Comfortable cotton t-shirt available in various colors.",
+            colors: ["#ff0000", "#00ff00", "#0000ff"]
+        },
+        {
+            id: 2,
+            name: "Slim Fit Jeans",
+            price: 49.99,
+            image: "fit-jeans.jpeg",
+            description: "Stylish slim fit jeans perfect for any casual occasion.",
+            colors: ["#000080", "#8b4513"]
+        },
+        {
+            id: 3,
+            name: "Running Sneakers",
+            price: 79.99,
+            image: "sneakers.jpg",
+            description: "Lightweight and comfortable sneakers for your daily run.",
+            colors: ["#ffffff", "#000000", "#ff0000"]
+        },
+        
+        {
+            id: 7,
+            name: "Fitness Tracker",
+            price: 29.99,
+            image: "fitness.jpg",
+            description: "Track your fitness goals with this sleek and stylish tracker.",
+            colors: ["#000000", "#808080", "#c0c0c0"]
+        },
+    
+        {
+            id: 8,
+            name: "Gaming Console",
+            price: 299.99,
+            image: "gamingconsole.jpg",
+            description: "Experience immersive gaming with this powerful console.",
+            colors: ["#000000", "#ffffff", "#008000"]
+        },
+    
+        {
+            id: 9,
+            name: "Portable Power Bank",
+            price: 19.99,
+            image: "powerbank.jpg",
+            description: "Charge your devices on-the-go with this compact power bank.",
+            colors: ["#000000", "#ffffff", "#ff0000"]
+        },
+    
+        {
+            id: 10,
+            name: "Water Bottle",
+            price: 9.99,
+            image: "bottle.jpg",
+            description: "Stay hydrated with this eco-friendly water bottle.",
+            colors: ["#000000", "#ffffff", "#008000"]
+        },
+    
+    {
+        id: 11,
+        name: "Tablet Stand",
+        price: 19.99,
+        image: "tabstand.jpg",
+        description: "Adjustable stand for tablets and smartphones.",
+        colors: ["#000000", "#ffffff", "#808080"]
+        },
+        
+        {
+        id: 12,
+        name: "Virtual Reality Headset",
+        price: 199.99,
+        image: "VR headset.jpg",
+        description: "Immersive VR experience with advanced graphics.",
+        colors: ["#000000", "#ffffff", "#008000"]
+        },
+        {
+        id: 15,
+        name: "Wireless Router",
+        price: 49.99,
+        image: "router.jpeg",
+        description: "High-speed wireless router for home networking.",
+        colors: ["#000000", "#ffffff", "#ff0000"]
+        },
+        
+        {
+        id: 16,
+        name: "External Hard Drive",
+        price: 79.99,
+        image: "harddrive.jpg",
+        description: "High-capacity external hard drive for data storage.",
+        colors: ["#000000", "#ffffff", "#008000"]
+        }
+    ];
+    
+    let cart = [];
+    
+    function displayProducts() {
+        const productGrid = document.getElementById('productGrid');
+        productGrid.innerHTML = '';
+        products.forEach(product => {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            productCard.innerHTML = `
+                <img id="imghover" src="${product.image}" text=${product.name}" alt="${product.name}">
+                <h3>${product.name}</h3>
+                <p>${product.description}</p>
+                <p class="price">$${product.price.toFixed(2)}</p>
+                <div class="color-options">
+                    ${product.colors.map((color, index) => `
+                        <div class="color-option ${index === 0 ? 'selected' : ''}" 
+                             style="background-color: ${color};"
+                             onclick="selectColor(this, ${product.id}, '${color}')"></div>
+                    `).join('')}
+                    
+                </div>
+    
+                <div class="quantity-selector">
+                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+                    <span class="quantity" id="quantity-${product.id}">1</span>
+                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+                </div>
+                
+                <button class="add-to-cart-btn" onclick="addToCart(${product.id})">Add to Cart</button>
+               
+            `;
+            productGrid.appendChild(productCard);
+            
+        });
+    }
+    
+    function selectColor(element, productId, color) {
+        const productCard = element.closest('.product-card');
+        productCard.querySelectorAll('.color-option').forEach(option => option.classList.remove('selected'));
+        element.classList.add('selected');
+        // You can use the selected color when adding the item to the cart
+    }
+    
+    function changeQuantity(productId, change) {
+        const quantityElement = document.getElementById(`quantity-${productId}`);
+        let quantity = parseInt(quantityElement.textContent) + change;
+        if (quantity < 1) quantity = 1;
+        quantityElement.textContent = quantity;
+    }
+    
+    
+    function addToCart(productId) {  //this function is used to add the product to cart 
+        const product = products.find(p => p.id === productId);
+        const quantity = parseInt(document.getElementById(`quantity-${productId}`).textContent);
+        const selectedColor = document.querySelector(`.product-card:has(#quantity-${productId}) .color-option.selected`).style.backgroundColor;
+    
+        const existingItem = cart.find(item => item.id === productId && item.color === selectedColor);
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        } else {
+            cart.push({ ...product, quantity, color: selectedColor });
+        }
+    
+        updateCartCount();
+        updateCartSidebar();
+        showAlert();
+    }
+    
+    function updateCartCount() {
+        const cartCount = document.getElementById('cartCount');
+        cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity,0);
+    }//when we click the function it returns the updatecartcount
+    
+    function updateCartSidebar() {  //updating the value in cart 
+        const cartItems = document.getElementById('cartItems');
+        cartItems.innerHTML = '';
+        cart.forEach(item => {
+            const cartItem = document.createElement('div');
+            cartItem.innerHTML = `
+                <p>${item.name} - $${item.price.toFixed(2)} x ${item.quantity}</p>
+                <p>Color: <span style="display: inline-block; width: 20px; height: 20px; background-color: ${item.color}; vertical-align: middle;"></span></p>
+                <button onclick="removeFromCart(${item.id}, '${item.color}')">Remove</button>
+            `;
+            cartItems.appendChild(cartItem);
+        });
+    }
+    
+    function removeFromCart(productId, color) {
+        cart = cart.filter(item => !(item.id === productId && item.color === color));
+        updateCartCount();
+        updateCartSidebar();
+    } // this function is used to remove the product from the cart 
+    
+    function showAlert() { 
+        const alert = document.getElementById('alert');
+        alert.style.display = 'block';
+        setTimeout(() => {
+            alert.style.display = 'none';
+        }, 4000);
+    } 
+    
+    document.getElementById('cartBtn').addEventListener('click', () => {
+        document.getElementById('cartSidebar').classList.toggle('open');
+    });
+    
+    document.getElementById('closeCart').addEventListener('click', () => {
+        document.getElementById('cartSidebar').classList.remove('open');
+    });
+    
+    
+    displayProducts();
+    
+    
+    
+    
+    
+    
+    </script>
+</body>
+</html>  
+
+
+
+ -->
+
+ 
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Store</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+        }   
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: box-shadow 0.3s ease;
+        }
+        .product-card:hover {
+            box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+        }
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;  
+            transform: scale(1);
+        }
+        #imghover:hover {
+            cursor: pointer;
+            transform: scale(1.1);
+            transition: all 0.5s ease-in;
+        }
+        .product-card h3 {
+            margin: 10px 0;
+        }
+        .product-card p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .product-card .price {
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        .color-options {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .color-option {     
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #ddd;
+        }
+        .color-option.selected {
+            box-shadow: 0 0 0 2px #333;
+        }
+        .quantity-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .quantity-btn {
+            background-color: #ddd;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .quantity {
+            margin: 0 10px;
+        }
+        .add-to-cart-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: #fff;
+            padding: 20px;
+            transition: right 0.3s ease-in-out;
+            z-index: 1000;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+        }
+        .cart-sidebar.open {
+            right: 0;
+        }
+        .close-cart {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .alert {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            z-index: 10000;
+        }
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h1>🛒 shopy.cart</h1>
+            <button class="cart-btn" id="cartBtn">Cart (<span id="cartCount">0</span>)</button>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="product-grid" id="productGrid"></div>
+    </div>
+    
+    <div class="cart-sidebar" id="cartSidebar">
+        <button class="close-cart" id="closeCart">&times;</button>
+        <h2>🛒Cart</h2>
+        <div id="cartItems"></div>
+    </div>
+
+    <div class="alert" id="alert">Added to cart successfully!</div>
+
+    <script>
+        const products = [
+            {
+                id: 1,
+                name: "Classic T-Shirt",
+                price: 19.99,
+                image: "tshirt.jpg",
+                description: "Comfortable cotton t-shirt available in various colors.",
+                colors: ["#ff0000", "#00ff00", "#0000ff"],
+                reviews: [
+                    { user: "John", rating: 5, comment: "Great quality t-shirt!" },
+                    { user: "Sarah", rating: 4, comment: "Comfortable, but sizes run small." }
+                ]
+            },
+            {
+                id: 2,
+                name: "Slim Fit Jeans",
+                price: 49.99,
+                image: "fit-jeans.jpeg",
+                description: "Stylish slim fit jeans perfect for any casual occasion.",
+                colors: ["#000080", "#8b4513"],
+                reviews: [
+                    { user: "John", rating: 5, comment: "Great quality t-shirt!" },
+                    { user: "Sarah", rating: 4, comment: "Comfortable, but sizes run small." }
+                ]
+            },
+            // Add more products here...
+        ];
+        
+        let cart = [];
+        
+        function displayProducts() {
+            const productGrid = document.getElementById('productGrid');
+            productGrid.innerHTML = '';
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <img id="imghover" src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p class="price">$${product.price.toFixed(2)}</p>
+                    <div class="color-options">
+                        ${product.colors.map((color, index) => `
+                            <div class="color-option ${index === 0 ? 'selected' : ''}" 
+                                 style="background-color: ${color};"
+                                 onclick="selectColor(this, ${product.id}, '${color}')"></div>
+                        `).join('')}
+                    </div>
+                    <div class="quantity-selector">
+                        <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+                        <span class="quantity" id="quantity-${product.id}">1</span>
+                        <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" onclick="addToCart(${product.id})">Add to Cart</button>
+                     <div class="reviews">
+                        <h4>Reviews:</h4>
+                        ${displayReviews(product.reviews)}
+                    </div>
+                `;
+                productGrid.appendChild(productCard);
+            });
+        }
+        
+        function selectColor(element, productId, color) {
+            const productCard = element.closest('.product-card');
+            productCard.querySelectorAll('.color-option').forEach(option => option.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+        
+        function changeQuantity(productId, change) {
+            const quantityElement = document.getElementById(`quantity-${productId}`);
+            let quantity = parseInt(quantityElement.textContent) + change;
+            if (quantity < 1) quantity = 1;
+            quantityElement.textContent = quantity;
+        }
+        
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const quantity = parseInt(document.getElementById(`quantity-${productId}`).textContent);
+            const selectedColor = document.querySelector(`.product-card:has(#quantity-${productId}) .color-option.selected`).style.backgroundColor;
+        
+            const existingItem = cart.find(item => item.id === productId && item.color === selectedColor);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({ ...product, quantity, color: selectedColor });
+            }
+        
+            updateCartCount();
+            updateCartSidebar();
+            showAlert();
+        }
+        
+        function updateCartCount() {
+            const cartCount = document.getElementById('cartCount');
+            cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+        }
+        
+        function calculateCartTotal() {
+            return cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+        }
+        
+        function updateCartSidebar() {
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = '';
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.innerHTML = `
+                    <p>${item.name} - $${item.price.toFixed(2)} x ${item.quantity}</p>
+                    <p>Color: <span style="display: inline-block; width: 20px; height: 20px; background-color: ${item.color}; vertical-align: middle;"></span></p>
+                    <button onclick="removeFromCart(${item.id}, '${item.color}')">Remove</button>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+        
+            // Add total to cart sidebar
+            const totalElement = document.createElement('div');
+            totalElement.innerHTML = `<h3>Total: $${calculateCartTotal()}</h3>`;
+            cartItems.appendChild(totalElement);
+        }
+        
+        function removeFromCart(productId, color) {
+            cart = cart.filter(item => !(item.id === productId && item.color === color));
+            updateCartCount();
+            updateCartSidebar();
+        }
+        
+        function showAlert() {
+            const alert = document.getElementById('alert');
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 4000);
+        }
+        
+        document.getElementById('cartBtn').addEventListener('click', () => {
+            document.getElementById('cartSidebar').classList.toggle('open');
+        });
+        
+        document.getElementById('closeCart').addEventListener('click', () => {
+            document.getElementById('cartSidebar').classList.remove('open');
+        });
+
+
+        
+        displayProducts();
+    </script>
+</body>
+</html>
